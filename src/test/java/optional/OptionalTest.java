@@ -3,6 +3,7 @@ package optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -63,5 +64,42 @@ public class OptionalTest {
         String nameNull = null;
         String name = Optional.ofNullable(nameNull).orElseGet(() -> "kim");
         assertThat(name).isEqualTo("kim");
+    }
+
+    @Test
+    void orElseThrow() {
+        String nullName = null;
+        assertThatThrownBy(() -> Optional.ofNullable(nullName).orElseThrow())
+                .isInstanceOf(NoSuchElementException.class);
+    }
+
+    @Test
+    void get() {
+        Optional<String> nameOpt = Optional.of("kim");
+        String name = nameOpt.get();
+        assertThat(name).isEqualTo("kim");
+    }
+
+    @Test
+    void get_예외발생() {
+        Optional<String> nameOpt = Optional.ofNullable(null);
+        assertThatThrownBy(() -> nameOpt.get())
+                .isInstanceOf(NoSuchElementException.class);
+    }
+
+    @Test
+    void filerWithOptional_true() {
+        Optional<String> nameOpt = Optional.of("kim");
+        boolean result = nameOpt.filter(name -> name.startsWith("k"))
+                .isPresent();
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void filerWithOptional_false() {
+        Optional<String> nameOpt = Optional.of("lee");
+        boolean result = nameOpt.filter(name -> name.startsWith("k"))
+                .isPresent();
+        assertThat(result).isFalse();
     }
 }
