@@ -3,6 +3,8 @@ package optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -101,5 +103,41 @@ public class OptionalTest {
         boolean result = nameOpt.filter(name -> name.startsWith("k"))
                 .isPresent();
         assertThat(result).isFalse();
+    }
+
+    @Test
+    void optionalWithMap_V1() {
+        List<String> names = Arrays.asList("kim", "lee", "park");
+        Optional<List<String>> namesOpt = Optional.of(names);
+        int size = namesOpt
+                .map(List::size)
+                .orElseGet(() -> 0);
+        assertThat(size).isEqualTo(3);
+    }
+
+    @Test
+    void optionalWithMap_V2() {
+        String name = "Hong";
+        Optional<String> nameOpt = Optional.of(name);
+        int len = nameOpt
+                .map(String::length)
+                .orElseGet(() -> 0);
+        assertThat(len).isEqualTo(4);
+    }
+
+    @Test
+    void optionalWithFilterAndMap() {
+        String password = " password ";
+        Optional<String> passwordOpt = Optional.of(password);
+        boolean correctPassword = passwordOpt
+                .filter(pass -> pass.equals("password"))
+                .isPresent();
+        assertThat(correctPassword).isFalse();
+
+        correctPassword = passwordOpt
+                .map(String::trim)
+                .filter(pass -> pass.equals("password"))
+                .isPresent();
+        assertThat(correctPassword).isTrue();
     }
 }
